@@ -1,0 +1,4 @@
+[
+  {"name":"dog","class":"com.qimingnan.beans.Dog"},
+  {"name":"cat","class":"com.qimingnan.beans.Cat"}
+]
