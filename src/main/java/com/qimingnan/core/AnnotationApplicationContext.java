@@ -3,8 +3,12 @@ package com.qimingnan.core;
 
 import com.qimingnan.annotation.Component;
 import com.qimingnan.annotation.ComponentScan;
+import com.qimingnan.annotation.Conditional;
+import com.qimingnan.beans.ConditionalDog;
+import com.qimingnan.interfaces.Condition;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 
 /**
  *  优化：
@@ -23,6 +27,12 @@ public class AnnotationApplicationContext extends BeanFactoryImpl {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        refresh();
+    }
+
+    private void refresh() {
+        
     }
 
     private void componentScan() throws Exception {
@@ -86,8 +96,35 @@ public class AnnotationApplicationContext extends BeanFactoryImpl {
             return;
         }
 
+        if (className.equals(ConditionalDog.class.getName())) {
+            System.out.println("===>" + className);
+
+            System.out.println(clazz.getAnnotation(Component.class));
+
+        }
+
         // 获取每个对象的注解，如果被@Component修饰就存储
         if (null != clazz.getAnnotation(Component.class)) {
+            // 处理@Conditional
+            Conditional conditionalAnnotation;
+
+            if (null != (conditionalAnnotation = (Conditional) clazz.getAnnotation(Conditional.class))) {
+                Class<? extends Condition> value = conditionalAnnotation.value();
+
+                try {
+                    if (!value.newInstance().matches(this)) {
+                        System.out.println("matches false" + fileItem.getName());
+
+                        return;
+                    }
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // 注册Bean
             registerBeans(fileItem.getName().replace(".class", "").toLowerCase(), className);
         }
     }
