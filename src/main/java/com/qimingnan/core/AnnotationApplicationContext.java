@@ -4,6 +4,7 @@ package com.qimingnan.core;
 import com.qimingnan.annotation.Component;
 import com.qimingnan.annotation.ComponentScan;
 import com.qimingnan.annotation.Conditional;
+import com.qimingnan.annotation.Import;
 import com.qimingnan.beans.ConditionalDog;
 import com.qimingnan.interfaces.Condition;
 
@@ -36,6 +37,18 @@ public class AnnotationApplicationContext extends BeanFactoryImpl {
     }
 
     private void componentScan() throws Exception {
+        // 检测是否被@Import修饰
+        Import importAnno = (Import) this.configClass.getAnnotation(Import.class);
+
+        Class<?>[] importClasses = importAnno.value();
+        if (importClasses.length > 0) {
+
+            for (Class<?> importClass : importClasses) {
+                // 注册Bean
+                registerBeans(importClass.getSimpleName().toLowerCase(), importClass.getName());
+            }
+        }
+
         // 检测是否被@ComponentScan修饰
         ComponentScan componentScan = (ComponentScan) this.configClass.getAnnotation(ComponentScan.class);
         if (null == componentScan) {
@@ -96,13 +109,6 @@ public class AnnotationApplicationContext extends BeanFactoryImpl {
             return;
         }
 
-        if (className.equals(ConditionalDog.class.getName())) {
-            System.out.println("===>" + className);
-
-            System.out.println(clazz.getAnnotation(Component.class));
-
-        }
-
         // 获取每个对象的注解，如果被@Component修饰就存储
         if (null != clazz.getAnnotation(Component.class)) {
             // 处理@Conditional
@@ -113,7 +119,7 @@ public class AnnotationApplicationContext extends BeanFactoryImpl {
 
                 try {
                     if (!value.newInstance().matches(this)) {
-                        System.out.println("matches false" + fileItem.getName());
+                        System.out.println("matches false->" + fileItem.getName());
 
                         return;
                     }

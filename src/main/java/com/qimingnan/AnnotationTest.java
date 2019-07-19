@@ -1,6 +1,7 @@
 package com.qimingnan;
 
 import com.qimingnan.beans.Animal;
+import com.qimingnan.beans.ImportDog;
 import com.qimingnan.config.AppConfig;
 import com.qimingnan.core.AnnotationApplicationContext;
 
@@ -20,11 +21,14 @@ public class AnnotationTest {
 
         System.out.println("=============");
 
-        Animal conditionaldog = (Animal) context.getBean("conditionaldog");
-        if (null != conditionaldog) {
-            conditionaldog.run();
-        } else {
-            System.out.println("未注入");
-        }
+//        Animal conditionaldog = (Animal) context.getBean("conditionaldog");
+//        if (null != conditionaldog) {
+//            conditionaldog.run();
+//        } else {
+//            System.out.println("未注入");
+//        }
+
+        Animal importdog = (Animal) context.getBean("importdog");
+        importdog.eat();
     }
 }
