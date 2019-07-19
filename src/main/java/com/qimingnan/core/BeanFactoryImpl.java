@@ -42,6 +42,10 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
+    public void registerBeans(String name, String className) {
+        beanMap.put(name, className);
+    }
+
     public Map<String, String> getBeans() {
         return beanMap;
     }
